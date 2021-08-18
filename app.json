@@ -1,11 +1,19 @@
 {
   "expo": {
-    "name": "esports",
-    "slug": "esports",
+    "name": "Bet E-sports",
+    "slug": "bet-esports",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "ios": {
+      "bundleIdentifier": "com.acutistecnologia.esports",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.acutistecnologia.esports",
+      "versionCode": 1
+    }
   },
   "name": "esports"
 }
