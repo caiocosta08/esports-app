@@ -22,6 +22,7 @@ export const login = async (user) => {
 export const register = async (user) => {
     try {
         let results = await axios.post('/user/register', {
+            nickname: user?.nickname,
             email: user?.email,
             password: user?.password,
             name: user?.name,

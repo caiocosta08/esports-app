@@ -11,7 +11,7 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux';
 import { setUser } from '../actions/'
-import Styles from '../assets/styles';
+import Styles, { colors } from '../assets/styles';
 
 // Images
 import logo from '../assets/images/logo.png';
@@ -22,10 +22,10 @@ const Register = (props) => {
 
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const [userToRegister, setUserToLogin] = useState({ name: "", email: "", password: "", cpf: "", phone: "", image_url: "", confirmPassword: "" });
+    const [userToRegister, setUserToLogin] = useState({ nickname: "", name: "", email: "", password: "", cpf: "", phone: "", image_url: "", confirmPassword: "" });
 
     const handleRegisterUser = async (user) => {
-        if (user?.name === "" || user?.email == "" || user?.password == "" || user?.cpf == "" || user?.phone == "" || user?.confirmPassword == "") {
+        if (user?.nickname === "" || user?.name === "" || user?.email == "" || user?.password == "" || user?.cpf == "" || user?.phone == "" || user?.confirmPassword == "") {
             Alert.alert("Erro", "Preencha todos os campos");
             return false;
         }
@@ -46,14 +46,15 @@ const Register = (props) => {
     return (
         <View style={Styles.container}>
             <Image source={logo} style={Styles.logo} />
-            {/* <TextInput style={Styles.textInput} onChangeText={(e) => setUserToLogin({ ...userToRegister, email: e })} defaultValue={userToRegister.email} placeholder="Criar apelido" placeholderTextColor="#5656B4" /> */}
+            {/* <TextInput style={Styles.textInput} onChangeText={(e) => setUserToLogin({ ...userToRegister, email: e })} defaultValue={userToRegister.email} placeholder="Criar apelido" placeholderTextColor={colors.primary} /> */}
             {/* <Text style={Styles.tipText}>Ex: @mestre.dos.magos</Text> */}
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, name: e })} defaultValue={userToRegister.name} placeholder="Name" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, email: e })} defaultValue={userToRegister.email} placeholder="E-mail" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, cpf: e })} defaultValue={userToRegister.cpf} placeholder="CPF" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, phone: e })} defaultValue={userToRegister.phone} placeholder="Telefone" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, password: e })} defaultValue={userToRegister.password} placeholder="Senha" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, confirmPassword: e })} defaultValue={userToRegister.confirmPassword} placeholder="Confirmar senha" placeholderTextColor="#5656B4" />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, nickname: e })} defaultValue={userToRegister.nickname} placeholder="Nickname" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, name: e })} defaultValue={userToRegister.name} placeholder="Name" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, email: e })} defaultValue={userToRegister.email} placeholder="E-mail" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, cpf: e })} defaultValue={userToRegister.cpf} placeholder="CPF" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, phone: e })} defaultValue={userToRegister.phone} placeholder="Telefone" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, password: e })} defaultValue={userToRegister.password} placeholder="Senha" placeholderTextColor={colors.primary} />
+            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToRegister, confirmPassword: e })} defaultValue={userToRegister.confirmPassword} placeholder="Confirmar senha" placeholderTextColor={colors.primary} />
             <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleRegisterUser(userToRegister)}>
                 <Text style={Styles.buttonPrimaryText}>CADASTRAR</Text>
             </TouchableOpacity>
