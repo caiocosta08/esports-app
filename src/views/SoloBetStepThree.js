@@ -14,7 +14,8 @@ import { useNavigation } from '@react-navigation/native'
 
 import { connect, useSelector, useDispatch } from 'react-redux';
 import Styles, { colors } from '../assets/styles';
-import { setLoadingModalVisible } from '../actions/index';
+import { setLoadingModalVisible, setUser } from '../actions/index';
+
 // Images
 import logo from '../assets/images/logo.png';
 import iconBetGroup from '../assets/images/icon-group-bet.png';
@@ -23,6 +24,9 @@ import iconBetSingle from '../assets/images/icon-single-bet.png';
 // Services
 import * as Functions from '../services/functions.service';
 import ToggleButton from '../assets/components/ToggleButton';
+
+// Controllers
+import * as BetsController from '../controllers/bets.controller';
 
 const SoloBetStepThree = (props) => {
 
@@ -33,14 +37,41 @@ const SoloBetStepThree = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
+    const { newBet } = useSelector((state) => state?.betReducer);
     const [betType, setBetType] = useState("imediate");
 
-    const handleMoveToNextStep = (type) => {
+    const handleCreateBet = async (type) => {
         if (type === "") {
             Alert.alert("Erro", "Selecione um oponente antes de avançar");
             return false;
         }
-        navigation.navigate('Home')
+
+        let info = {
+            title: newBet?.title,
+            entry_value: newBet?.amount,
+            owner_id: user?.id,
+            bets_types_id: 1,
+            home: [user?.id],
+            away: newBet?.away
+        }
+
+        try {
+            dispatch(setLoadingModalVisible(true));
+            let result = await BetsController.create(info);
+            if (result?.error) {
+                Alert.alert("Erro", result?.error);
+                dispatch(setLoadingModalVisible(false));
+                return false;
+            }
+            Alert.alert("Sucesso!", "Sua aposta foi criada! :)");
+            dispatch(setLoadingModalVisible(false));
+            dispatch(setUser({...user, balance: result?.new_balance}));
+            navigation.navigate('Home');
+            return true;
+        } catch (error) {
+            dispatch(setLoadingModalVisible(false));
+            Alert.alert("Erro", error);
+        }
     };
 
     useEffect(() => {
@@ -50,10 +81,11 @@ const SoloBetStepThree = (props) => {
     return (
         <View style={{ ...Styles.container }}>
             <Text style={Styles.titlePrimary}>PASSO 3</Text>
+            <Text style={Styles.buttonSecondaryText}>Informações da nova aposta: {newBet?.title + "\n" + newBet?.amount + "\n" + newBet?.away}</Text>
             <Text style={Styles.buttonSecondaryText}>Inicie ou agende uma aposta</Text>
-            <ToggleButton onPress={ () => setBetType("imediate")} title="APOSTA IMEDIATA" isActive={betType === "imediate"} />
-            <ToggleButton onPress={ () => setBetType("schedule")} title="APOSTA AGENDADA" isActive={betType === "schedule"} />
-            <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleMoveToNextStep(betType)}>
+            <ToggleButton onPress={() => setBetType("imediate")} title="APOSTA IMEDIATA" isActive={betType === "imediate"} />
+            <ToggleButton onPress={() => setBetType("schedule")} title="APOSTA AGENDADA" isActive={betType === "schedule"} />
+            <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleCreateBet(betType)}>
                 <Text style={Styles.buttonPrimaryText}>{betType === "imediate" ? "APOSTAR AGORA" : "AGENDAR APOSTA"}</Text>
             </TouchableOpacity>
         </View>

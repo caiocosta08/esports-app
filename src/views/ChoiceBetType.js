@@ -29,22 +29,26 @@ const ChoiceBetType = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
+    const { currentGame } = useSelector((state) => state?.betReducer);
 
     useEffect(() => {
         console.log({ user });
+        navigation.setOptions({
+            title: currentGame
+        });
     }, [])
 
     return (
         <View style={{ ...Styles.container }}>
             <Text style={Styles.titlePrimary}>Escolha sua aposta</Text>
-            <TouchableOpacity onPress={ () => navigation.navigate('SoloBetStepOne')} style={{ justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('SoloBetStepOne')} style={{ justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
                 <Text style={Styles.titlePrimary}>MODO SOLO</Text>
                 <Text style={Styles.buttonSecondaryText}>1 vs 1</Text>
                 <Image source={iconBetSingle} style={Styles.betIcon} />
             </TouchableOpacity>
             <View style={{ width: '80%', height: 2, backgroundColor: colors.primary }} />
 
-            <TouchableOpacity onPress={ () => navigation.navigate('SoloBetStepOne')} style={{ justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('SoloBetStepOne')} style={{ justifyContent: 'center', alignItems: 'center', marginVertical: 20 }}>
                 <Text style={Styles.titlePrimary}>MODO EQUIPE</Text>
                 <Text style={Styles.buttonSecondaryText}>TEAM vs TEAM</Text>
                 <Image source={iconBetGroup} style={Styles.betIcon} />

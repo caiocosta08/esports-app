@@ -14,35 +14,34 @@ import { useNavigation } from '@react-navigation/native'
 
 import { connect, useSelector, useDispatch } from 'react-redux';
 import Styles, { colors } from '../assets/styles';
-import { setLoadingModalVisible } from '../actions/index';
-// Images
-import logo from '../assets/images/logo.png';
-import iconBetGroup from '../assets/images/icon-group-bet.png';
-import iconBetSingle from '../assets/images/icon-single-bet.png';
-
-// Services
-import * as Functions from '../services/functions.service';
-import LoadingModal from '../assets/components/LoadingModal';
+import { setNewBet } from '../actions/index';
 
 const SoloBetStepOne = (props) => {
 
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
+    const { newBet } = useSelector((state) => state?.betReducer);
     const [betInfo, setBetInfo] = useState({ title: "", amount: "" });
 
     useEffect(() => {
         console.log({ user });
     }, [])
 
-    const handleMoveToNextStep = (info) => {
+    const handleMoveToNextStep = async (info) => {
 
         if (info?.title === "" || info?.amount === "") {
             Alert.alert("Erro", "Preencha todos os campos");
             return false;
         }
 
-        navigation.navigate('SoloBetStepTwo');
+        try {
+            dispatch(setNewBet({ ...newBet, title: info?.title, amount: info?.amount }));
+            navigation.navigate('SoloBetStepTwo');
+        } catch (error) {
+
+        }
+
     }
 
     return (

@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Alert,
     View,
     TouchableOpacity,
     Text,
     TextInput,
-    Image
+    Image,
+    KeyboardAvoidingView,
+    Button
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import { connect, useDispatch } from 'react-redux';
@@ -42,22 +44,24 @@ const Login = (props) => {
     }
 
     return (
-        <View style={Styles.container}>
+        <KeyboardAvoidingView style={Styles.container} behavior="padding">
             <Image source={logo} style={Styles.logo} />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToLogin, email: e })} defaultValue={userToLogin.email} placeholder="E-mail" placeholderTextColor="#5656B4" />
-            <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToLogin, password: e })} defaultValue={userToLogin.password} placeholder="Senha" placeholderTextColor="#5656B4" />
+            <TextInput secureTextEntry={false} style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToLogin, email: e })} defaultValue={userToLogin.email} placeholder="E-mail" placeholderTextColor="#5656B4" />
+            <TextInput secureTextEntry={true} style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToLogin({ ...userToLogin, password: e })} defaultValue={userToLogin.password} placeholder="Senha" placeholderTextColor="#5656B4" />
             <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleLoginUser(userToLogin)}>
                 <Text style={Styles.buttonPrimaryText}>ENTRAR</Text>
             </TouchableOpacity>
             <TouchableOpacity style={Styles.buttonSecondary} onPress={() => navigation.navigate('ResetPassword')}>
                 <Text style={Styles.buttonSecondaryText}>ESQUECI MINHA SENHA</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={Styles.buttonSecondary} onPress={() => navigation.navigate('Register')}>
-                <Text style={Styles.buttonSecondaryText}>CADASTRAR</Text>
-            </TouchableOpacity>
-        </View>
+        </KeyboardAvoidingView>
     );
 };
+
+
+Login.navigationOptions = ({ navigation }) => ({
+    title: "asdlskjd",
+})
 
 const mapStateToProps = (state) => {
     return {

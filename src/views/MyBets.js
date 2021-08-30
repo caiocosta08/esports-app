@@ -2,12 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
     Alert,
     View,
-    TouchableOpacity,
-    Text,
-    TextInput,
-    Image,
-    Button,
-    Pressable,
     ScrollView
 } from 'react-native';
 
@@ -15,20 +9,13 @@ import { useNavigation } from '@react-navigation/native'
 
 import { connect, useSelector, useDispatch } from 'react-redux';
 import Styles, { colors } from '../assets/styles';
-import { setLoadingModalVisible } from '../actions/index';
-// Images
-import logo from '../assets/images/logo.png';
-import logoFreefire from '../assets/images/logo-freefire.png';
-import logoLol from '../assets/images/logo-lol.png';
+import { setLoadingModalVisible, setUser, setCurrentBet } from '../actions/index';
 
 // Services
 import * as Functions from '../services/functions.service';
 
 // Components
 import LoadingModal from '../assets/components/LoadingModal';
-import GameListItem from '../assets/components/GameListItem';
-import SectionTitle from '../assets/components/SectionTitle';
-import CircleButton from '../assets/components/CircleButton';
 import BetListItem from '../assets/components/BetListItem';
 
 import * as BetsController from '../controllers/bets.controller';
@@ -38,66 +25,111 @@ const MyBets = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
-    const [betsList, setBetsList] = useState([
-        { id: 1, title: "x1 dos cria", status: "EM ANDAMENTO", date: "07/09/2021 | 00:00", amount: '2000', type: 'group' },
-        { id: 2, title: "x1 dos cria 2", status: "EM ANDAMENTO", date: "07/09/2021 | 00:00", amount: '2000', type: 'group' },
-        { id: 3, title: "x1 dos cria 3", status: "EM ANDAMENTO", date: "07/09/2021 | 00:00", amount: '2000', type: 'group' },
-        { id: 4, title: "x1 dos cria 4", status: "EM ANDAMENTO", date: "07/09/2021 | 00:00", amount: '2000', type: 'group' },
-    ]);
-
-    const [bets, setBets] = useState([]);
+    const { currentBet } = useSelector((state) => state?.betReducer);
+    const [betsList, setBetsList] = useState([]);
 
     const handleGetBets = async () => {
-        let results = await BetsController.getAll();
+        let results = await BetsController.getAllByUserId(user?.id);
         if (results?.error) return false;
+        console.log({ results })
         setBetsList(results);
     }
 
+    const handleAcceptInvite = async (bet_id) => {
+        if (bet_id === "") {
+            Alert.alert("Erro", "Selecione a aposta que quer aceitar.");
+            return false;
+        }
+
+        try {
+            let result = await BetsController.changeBetPlayerStatus(bet_id, user?.id, "accepted");
+            if (result?.error) {
+                console.log(result?.error)
+                Alert.alert("Erro", result?.error);
+                return false;
+            }
+            Alert.alert("Sucesso!", "Você aceitou a aposta! :)");
+            handleGetBets();
+            dispatch(setUser({ ...user, balance: result?.new_balance }));
+            return true;
+        } catch (error) {
+            Alert.alert("Erro", error);
+            console.log("Erro", error);
+        }
+    };
+
+    const handleRejectInvite = async (bet_id) => {
+        if (bet_id === "") {
+            Alert.alert("Erro", "Selecione a aposta que quer aceitar.");
+            return false;
+        }
+
+        try {
+            let result = await BetsController.changeBetPlayerStatus(bet_id, user?.id, "rejected");
+            if (result?.error) {
+                console.log(result?.error)
+                Alert.alert("Erro", result?.error);
+                return false;
+            }
+            Alert.alert("Sucesso!", "Você rejeitou a aposta! :)");
+            handleGetBets();
+            dispatch(setUser({ ...user, balance: result?.new_balance }));
+            return true;
+        } catch (error) {
+            Alert.alert("Erro", error);
+            console.log("Erro", error);
+        }
+    };
+
+    const handleMoveToNextScreen = async (current_bet) => {
+        if (current_bet === "") {
+            Alert.alert("Erro", "Selecione a aposta que quer ver.");
+            return false;
+        }
+
+        try {
+            dispatch(setCurrentBet(current_bet));
+            navigation.navigate("SingleBet");
+            return true;
+        } catch (error) {
+            Alert.alert("Erro", error);
+            console.log("Erro", error);
+        }
+    };
+
     useEffect(() => {
-        handleGetBets()
+        console.log({ currentBet })
+        handleGetBets();
     }, [])
 
     return (
         <ScrollView style={{ width: '100%', backgroundColor: colors.dark }} showsVerticalScrollIndicator={false}>
 
             <View style={{ ...Styles.container, justifyContent: 'flex-start' }}>
-                {/* <TouchableOpacity style={Styles.buttonPrimary}>
-                    <Text style={Styles.buttonPrimaryText}>MINHAS APOSTAS</Text>
-                </TouchableOpacity> */}
-                {/* <SectionTitle title="Em destaque" /> */}
-                {/* <Text style={{ ...Styles.tipText, fontSize: 14 }}>Em destaque</Text> */}
-                {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}
-                    style={{ width: '100%', height: 100 }}
-                    contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-                >
-                    {betsList && betsList.map(item => {
-                        return (
-                            <CircleButton key={item?.id} photo={item?.photo} onPress={() => navigation.navigate('ChoiceBetType')} />
-                        );
-                    })}
-                </ScrollView> */}
                 <LoadingModal />
-                {/* <Image source={logo} style={Styles.logo} /> */}
-                {/* <Text style={Styles.titlePrimary}>HOME</Text> */}
-                {/* <Text style={Styles.titlePrimary}>{user?.email}</Text> */}
-                {/* <Text style={Styles.titlePrimary}>{Functions.centsToBrl(user?.balance)}</Text> */}
-                {/* <SectionTitle title="Jogos para apostar" /> */}
                 {betsList && betsList.map(item => {
-                    if (item?.owner_id === user?.id) return (
-                        <BetListItem key={item?.id}
-                            title="x1doscria" status={item?.status || "PENDING"} date="07/09/2021 | 00:00" amount={item?.entry_value || "R$00,00"} type="group"
+
+                    return (
+                        <BetListItem key={item?.bet_id}
+                            title={item?.bet?.title} status={item?.status || "PENDING"} date="07/09/2021 | 00:00" amount={item?.bet?.entry_value || "R$00,00"} type="group"
                             onPress={() => {
                                 Alert.alert("Detalhes da aposta",
-                                    "Título: x1doscria\n" +
+                                    "Título: " + item?.bet?.title + "\n" +
                                     "Status: " + item?.status + "\n" +
+                                    "Status de aceitação: " + item.status + "\n" +
                                     "Data: " + item?.createdAt + "\n" +
-                                    "Valor para entrada: " + Functions.centsToBrl(item?.entry_value) + "\n"
+                                    "Valor para entrada: " + Functions.centsToBrl(item?.bet?.entry_value) + "\n",
+                                    [
+                                        { text: "VOLTAR", onPress: () => { console.log(item.status) } },
+                                        { text: "VER DETALHES", onPress: () => { handleMoveToNextScreen(item) } },
+                                        item.status === "invited" ? { text: "ACEITAR CONVITE", onPress: () => { handleAcceptInvite(item?.bet_id) } } : false,
+                                        item.status === "invited" ? { text: "REJEITAR CONVITE", onPress: () => { handleRejectInvite(item?.bet_id) } } : false
+                                    ]
                                 )
                             }
                             } />
                     );
                 })}
-                {/* <Button onPress={() => navigation.navigate('DepositMenu')} title="DEPÓSITO" /> */}
             </View>
         </ScrollView>
     );

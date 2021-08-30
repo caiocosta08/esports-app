@@ -29,7 +29,9 @@ const BetListItem = ({ title, status, date, amount, type, onPress, ...props }) =
                 <View style={{ flex: 1 }}>
                     <View style={{ marginVertical: 1, width: '100%', flexDirection: 'row', flexWrap: 'nowrap', alignItems: 'flex-end' }}>
                         <Text style={{ ...Styles.userListItemTitle, textAlign: 'left', flex: 0 }}>{title}</Text>
-                        <Text style={{ ...Styles.userListItemTitle, textAlign: 'left', flex: 0, color: colors.secondary, fontSize: 8, fontWeight: '900' }}>{status}</Text>
+                        {status === "invited" && <Text style={{ ...Styles.userListItemTitle, textAlign: 'left', flex: 0, color: colors.primary, fontSize: 8, fontWeight: '900' }}>CONVIDADO</Text>}
+                        {status === "accepted" && <Text style={{ ...Styles.userListItemTitle, textAlign: 'left', flex: 0, color: colors.secondary, fontSize: 8, fontWeight: '900' }}>CONFIRMADO</Text>}
+                        {status === "rejected" && <Text style={{ ...Styles.userListItemTitle, textAlign: 'left', flex: 0, color: colors.softSpotlight, fontSize: 8, fontWeight: '900' }}>REJEITADO</Text>}
                     </View>
                     <View style={{ marginVertical: 1, width: '100%', flexDirection: 'row', flexWrap: 'nowrap', alignItems: 'center', justifyContent: 'flex-start' }}>
                         <Text style={{ ...Styles.userListItemTitle, flex: 0 }}>{date}</Text>

@@ -6,7 +6,7 @@ export const deposit = async (info) => {
     // return
     try {
         let results = await axios.post('/transaction/new', {
-            metadata: { user_id: 1 || info?.id },
+            metadata: { user_id: info?.id || 1 },
             amount: info?.amount,
             card_number: info?.cardNumber,
             card_holder_name: info?.name,

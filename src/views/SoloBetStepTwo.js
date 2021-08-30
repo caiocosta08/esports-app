@@ -15,7 +15,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import Styles, { colors } from '../assets/styles';
 import { connect, useSelector, useDispatch } from 'react-redux';
-import { setUser, setLoadingModalVisible } from '../actions/index';
+import { setNewBet, setLoadingModalVisible } from '../actions/index';
 
 // Images
 import logo from '../assets/images/logo.png';
@@ -35,6 +35,7 @@ const SoloBetStepTwo = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
+    const { newBet } = useSelector((state) => state?.betReducer);
     const [nickToSearch, setNickToSearch] = useState("");
     const [oponentNickname, setOponentNickname] = useState("");
     const [list, setList] = useState([]);
@@ -45,7 +46,13 @@ const SoloBetStepTwo = (props) => {
             Alert.alert("Erro", "Selecione um oponente antes de avançar");
             return false;
         }
-        navigation.navigate("SoloBetStepThree");
+        try {
+            console.log({ oponent })
+            dispatch(setNewBet({ ...newBet, away: [oponent] }));
+            navigation.navigate("SoloBetStepThree");
+        } catch (error) {
+
+        }
     };
 
     const handleOnChange = async (text) => {
@@ -71,6 +78,7 @@ const SoloBetStepTwo = (props) => {
                 dispatch(setLoadingModalVisible(false));
                 return false;
             }
+            console.log({ results })
             setList(results);
             dispatch(setLoadingModalVisible(false));
             return true;
@@ -83,29 +91,19 @@ const SoloBetStepTwo = (props) => {
         <View style={{ ...Styles.container }}>
             <LoadingModal />
             <Text style={Styles.titlePrimary}>PASSO 2</Text>
+            <Text style={Styles.buttonSecondaryText}>Informações da nova aposta: {newBet?.title + " - " + newBet?.amount}</Text>
             <Text style={Styles.buttonSecondaryText}>Escolha seu oponente</Text>
-            {/* <TextInput onEndEditing={() => handleSearchByNickname(nickToSearch)} style={Styles.textInput} defaultValue={nickToSearch} onChangeText={(e) => setNickToSearch(e)} autoCapitalize="none" placeholder="Pesquise pelo nick" placeholderTextColor={colors.primary} /> */}
-            {/* <TextInput onBlur={() => handleSearchByNickname(nickToSearch)} style={Styles.textInput} defaultValue={nickToSearch} onChangeText={(e) => setNickToSearch(e)} autoCapitalize="none" placeholder="Pesquise pelo nick" placeholderTextColor={colors.primary} /> */}
             <TextInput
-                // onKeyPress={() => handleOnChange()}
                 onChangeText={(e) => handleOnChange(e)}
                 style={Styles.textInput} defaultValue={nickToSearch} autoCapitalize="none" placeholder="Pesquise pelo nick" placeholderTextColor={colors.primary} />
-
             <ScrollView style={{ width: '100%' }}>
                 {list && list.map(item => {
-                    // if (item.includes(nickToSearch))
                     return (
-                        <UserListItem key={item?.nickname} isActive={oponentNickname === item?.nickname}
-                            title={item?.nickname} onPress={() => setOponentNickname(item?.nickname)} />
+                        <UserListItem key={item?.nickname} isActive={oponentNickname === item?.id}
+                            title={item?.nickname} onPress={() => setOponentNickname(item?.id)} />
                     );
-                    // else return ();
                 })}
             </ScrollView>
-
-            {/* <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleSearchByNickname(nickToSearch)}>
-                <Text style={Styles.buttonPrimaryText}>PESQUISAR</Text>
-            </TouchableOpacity> */}
-
             <TouchableOpacity style={Styles.buttonPrimary} onPress={() => handleMoveToNextStep(oponentNickname)}>
                 <Text style={Styles.buttonPrimaryText}>AVANÇAR</Text>
             </TouchableOpacity>
