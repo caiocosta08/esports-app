@@ -36,9 +36,10 @@ const SoloBetStepThree = (props) => {
 
     const navigation = useNavigation();
     const dispatch = useDispatch();
+    const [betType, setBetType] = useState("imediate");
     const { user } = useSelector((state) => state?.userReducer);
     const { newBet } = useSelector((state) => state?.betReducer);
-    const [betType, setBetType] = useState("imediate");
+    const { currentGame } = useSelector((state) => state?.betReducer);
 
     const handleCreateBet = async (type) => {
         if (type === "") {
@@ -75,7 +76,9 @@ const SoloBetStepThree = (props) => {
     };
 
     useEffect(() => {
-        console.log({ user });
+        navigation.setOptions({
+            title: currentGame
+        });
     }, [])
 
     return (

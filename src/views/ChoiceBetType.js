@@ -32,7 +32,6 @@ const ChoiceBetType = (props) => {
     const { currentGame } = useSelector((state) => state?.betReducer);
 
     useEffect(() => {
-        console.log({ user });
         navigation.setOptions({
             title: currentGame
         });

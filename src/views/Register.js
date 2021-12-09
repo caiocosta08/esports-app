@@ -25,10 +25,10 @@ const Register = (props) => {
 
     const navigation = useNavigation();
     const dispatch = useDispatch();
-    const [userToRegister, setUserToRegister] = useState({ nickname: "", name: "", email: "", password: "", cpf: "", phone: "", image_url: "", confirmPassword: "" });
+    const [userToRegister, setUserToRegister] = useState({ id_gaming: "", nickname: "", name: "", email: "", password: "", cpf: "", phone: "", image_url: "", confirmPassword: "" });
 
     const handleRegisterUser = async (user) => {
-        if (user?.nickname === "" || user?.name === "" || user?.email == "" || user?.password == "" || user?.cpf == "" || user?.phone == "" || user?.confirmPassword == "") {
+        if (user?.id_gaming == "" || user?.nickname === "" || user?.name === "" || user?.email == "" || user?.password == "" || user?.cpf == "" || user?.phone == "" || user?.confirmPassword == "") {
             Alert.alert("Erro", "Preencha todos os campos");
             return false;
         }
@@ -54,9 +54,9 @@ const Register = (props) => {
                 showsVerticalScrollIndicator={false}>
                 <Image source={logo} style={Styles.logo} />
                 <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToRegister({ ...userToRegister, nickname: e })} defaultValue={userToRegister.nickname} placeholder="Nickname" placeholderTextColor={colors.primary} />
+                <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToRegister({ ...userToRegister, id_gaming: e })} defaultValue={userToRegister.id_gaming} placeholder="ID Gaming" placeholderTextColor={colors.primary} />
                 <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToRegister({ ...userToRegister, name: e })} defaultValue={userToRegister.name} placeholder="Name" placeholderTextColor={colors.primary} />
                 <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToRegister({ ...userToRegister, email: e })} defaultValue={userToRegister.email} placeholder="E-mail" placeholderTextColor={colors.primary} />
-                {/* <TextInput style={Styles.textInput} autoCapitalize="none" onChangeText={(e) => setUserToRegister({ ...userToRegister, cpf: e })} defaultValue={userToRegister.cpf} placeholder="CPF" placeholderTextColor={colors.primary} /> */}
 
                 <TextInputMask type={'cpf'} options={{}} value={userToRegister.cpf}
                     onChangeText={text => { setUserToRegister({ ...userToRegister, cpf: text }) }} style={Styles.textInput}

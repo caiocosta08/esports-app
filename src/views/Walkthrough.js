@@ -14,6 +14,7 @@ import { connect } from 'react-redux';
 import Styles from '../assets/styles';
 // Images
 import logo from '../assets/images/logo.png';
+// import logo from '../assets/images/logo-1.png';
 
 // Components
 import DotList from '../assets/components/DotList';

@@ -36,10 +36,17 @@ const SoloBetStepTwo = (props) => {
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
     const { newBet } = useSelector((state) => state?.betReducer);
+    const { currentGame } = useSelector((state) => state?.betReducer);
     const [nickToSearch, setNickToSearch] = useState("");
     const [oponentNickname, setOponentNickname] = useState("");
     const [list, setList] = useState([]);
     const [time, setTime] = useState(0);
+
+    useEffect(() => {
+        navigation.setOptions({
+            title: currentGame
+        });
+    }, [])
 
     const handleMoveToNextStep = (oponent) => {
         if (oponent === "") {
@@ -91,7 +98,7 @@ const SoloBetStepTwo = (props) => {
         <View style={{ ...Styles.container }}>
             <LoadingModal />
             <Text style={Styles.titlePrimary}>PASSO 2</Text>
-            <Text style={Styles.buttonSecondaryText}>Informações da nova aposta: {newBet?.title + " - " + newBet?.amount}</Text>
+            <Text style={Styles.buttonSecondaryText}>Informações da nova aposta: {newBet?.title + " - " + Functions.centsToBrl(newBet?.amount)}</Text>
             <Text style={Styles.buttonSecondaryText}>Escolha seu oponente</Text>
             <TextInput
                 onChangeText={(e) => handleOnChange(e)}

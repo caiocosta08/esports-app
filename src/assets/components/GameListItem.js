@@ -20,6 +20,7 @@ const GameListItem = ({ photo, onPress, ...props }) => {
 
     return (
         <TouchableOpacity onPress={onPress} style={{ ...Styles.gamePhotoContainer }}>
+            {/* <Image source={{ uri: photo }} style={Styles.gamePhoto} /> */}
             <Image source={photo} style={Styles.gamePhoto} />
         </TouchableOpacity>
     );

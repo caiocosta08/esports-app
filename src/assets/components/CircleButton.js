@@ -20,6 +20,7 @@ const CircleButton = ({ photo, onPress, ...props }) => {
 
     return (
         <TouchableOpacity onPress={onPress} style={{ ...Styles.circleImageContainer }}>
+            {/* <Image source={{ uri: photo }} style={Styles.circleImage} /> */}
             <Image source={photo} style={Styles.circleImage} />
         </TouchableOpacity>
     );

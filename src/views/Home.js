@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { connect, useSelector, useDispatch } from 'react-redux';
 import Styles, { colors } from '../assets/styles';
-import { logout, setLoadingModalVisible, setCurrentGame } from '../actions/index';
+import { logout, setLoadingModalVisible, setCurrentGame, setGames } from '../actions/index';
 // Images
 import logo from '../assets/images/logo.png';
 import logoFreefire from '../assets/images/logo-freefire.png';
@@ -26,6 +26,9 @@ import backIcon from '../assets/images/icon-back.png';
 
 // Services
 import * as Functions from '../services/functions.service';
+
+// Controllers
+import * as GamesController from '../controllers/games.controller';
 
 // Components
 import LoadingModal from '../assets/components/LoadingModal';
@@ -40,17 +43,23 @@ const Walkthrough = (props) => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state?.userReducer);
-    const [gameList, setGameList] = useState([
-        { id: 1, title: "Free Fire", photo: logoFreefire },
-        { id: 2, title: "LOL", photo: logoLol },
-    ]);
+    const { games } = useSelector((state) => state?.gameReducer);
 
-    useEffect(() => {
-        if (!user?.id) {
-            dispatch(logout());
-            navigation.navigate('Walkthrough');
+    const handleGetGames = async () => {
+        try {
+            let result = await GamesController.getAll();
+            if (result?.error) {
+                Alert.alert("Erro", result?.error);
+                return false;
+            }
+            console.log({ game_result: result })
+            dispatch(setGames(result));
+            navigation.navigate('Home');
+            return true;
+        } catch (error) {
+            Alert.alert("Erro", error);
         }
-    }, [])
+    }
 
     useEffect(() => {
         console.log({ user_id: user?.id });
@@ -61,17 +70,20 @@ const Walkthrough = (props) => {
     }, [user])
 
     useEffect(() => {
+        handleGetGames();
+    }, [])
+
+    useEffect(() => {
         navigation.setOptions({
             headerRight: () => {
-                if (user?.balance || 0) return (
+                return (
                     <View style={{ flexDirection: 'row', flexWrap: 'nowrap' }}>
                         <MoneyCard onPress={() => navigation.navigate("Wallet")} value={user?.balance || 0} />
                     </View>
                 )
             },
             headerLeft: () => {
-                if (user?.balance || 0) return (
-                    // <Button title="SAIR" onPress={() => dispatch(logout())} />
+                return (
                     <TouchableOpacity onPress={() => dispatch(logout())} >
                         <Image source={backIcon} style={Styles.backIcon} />
                     </TouchableOpacity>
@@ -103,9 +115,11 @@ const Walkthrough = (props) => {
                     style={{ width: '100%', height: 100 }}
                     contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
                 >
-                    {gameList && gameList.map(item => {
+                    {games && games.map(item => {
+                        let photo = item.id == 1 ? logoFreefire : logoLol
                         return (
-                            <CircleButton key={item?.id} photo={item?.photo} onPress={() => dispatch(setCurrentGame(item.title)) && navigation.navigate('ChoiceBetType')} />
+                            // <CircleButton key={item?.id} photo={item?.thumbnail_url} onPress={() => dispatch(setCurrentGame(item?.title)) && navigation.navigate('ChoiceBetType')} />
+                            <CircleButton key={item?.id} photo={photo} onPress={() => dispatch(setCurrentGame(item?.title)) && navigation.navigate('ChoiceBetType')} />
                         );
                     })}
                 </ScrollView>
@@ -119,7 +133,7 @@ const Walkthrough = (props) => {
                     style={{ width: "100%", height: 140 }}
                     contentContainerStyle={{ alignItems: 'center', justifyContent: 'center', alignContent: 'center' }}
                 >
-                    {gameList && gameList.map(item => {
+                    {games && games.map(item => {
                         return (
                             <BetInProgressItem key={item?.id} homePlayers={homePlayers} awayPlayers={[awayPlayers]} title={"X1 DOS CRIA"} />
                         );
@@ -127,9 +141,11 @@ const Walkthrough = (props) => {
                 </ScrollView>
                 <LoadingModal />
                 <SectionTitle title="Jogos para apostar" />
-                {gameList && gameList.map(item => {
+                {games && games.map(item => {
+                    let photo = item.id == 1 ? logoFreefire : logoLol
                     return (
-                        <GameListItem key={item?.id} photo={item?.photo} onPress={() => dispatch(setCurrentGame(item.title)) && navigation.navigate('ChoiceBetType')} />
+                        // <GameListItem key={item?.id} photo={item?.thumbnail_url} onPress={() => dispatch(setCurrentGame(item?.title)) && navigation.navigate('ChoiceBetType')} />
+                        <GameListItem key={item?.id} photo={photo} onPress={() => dispatch(setCurrentGame(item?.title)) && navigation.navigate('ChoiceBetType')} />
                     );
                 })}
                 <TouchableOpacity style={{ ...Styles.buttonSecondary, marginBottom: 20 }} onPress={() => console.log(":)")}>
